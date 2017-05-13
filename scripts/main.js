@@ -156,7 +156,7 @@ function init() {
 	enemy3.y = stage.canvas.height - 340;
 	enemy4.y = stage.canvas.height - 460;
 	enemy5.y = stage.canvas.height - 580;
-	
+	//
 	
 
 	// var enemy1cont = new createjs.Container();
