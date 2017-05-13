@@ -182,8 +182,22 @@ function tick(event) {
     if(downPressed && heroY < canvas.height-heroHeight) {
         heroY += 1;
     }
-    hero.x = heroX;
-    hero.y = heroY;
+
+    if(spacePressed){
+    	if(directionRight){
+    		skew = 17;
+    	}
+    	else{
+    		skew = -17;
+    	}
+    }
+    else{
+    	skew = 0;
+    }
+    hero.skewX= skew;
+    hero.x = heroX + heroHeight * Math.sin(skew*Math.PI/180);
+    hero.y = heroY + heroHeight * (1 - Math.cos(skew*Math.PI/180));
+
 
 	enemy1.x += direction;
 	enemy2.x += direction;
