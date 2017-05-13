@@ -14,7 +14,7 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-//another comment
+
 
 
 
@@ -157,8 +157,7 @@ function init() {
 	enemy3.y = stage.canvas.height - 340;
 	enemy4.y = stage.canvas.height - 460;
 	enemy5.y = stage.canvas.height - 580;
-	//
-	
+
 
 	// var enemy1cont = new createjs.Container();
 	// enemy1cont.x = stage.canvas.width - 50;
