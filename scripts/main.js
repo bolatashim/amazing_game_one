@@ -289,12 +289,10 @@ function tick(event) {
 
     var skew
     if(spacePressed){
-    	if(hero1.direction == 1){skew = 17;}
-    	else					{skew = -17;}
+    	if(hero1.direction == 1) skew = 17;
+    	else					 skew = -17;
     }
-    else{
-    	skew = 0;
-    }
+    else skew = 0;
     hero1.graphic.skewX= skew;
     hero1.graphic.x = hero1.xPosition + hero1.size[1] * Math.sin(skew*Math.PI/180);
     hero1.graphic.y = hero1.yPosition + hero1.size[1] * (1 - Math.cos(skew*Math.PI/180));
