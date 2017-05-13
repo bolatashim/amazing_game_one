@@ -108,7 +108,7 @@ function init() {
     hero1.appear(stage, startingPositionX, startingPositionY);
     hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.width, hero1.height);
 
-    enemy6 = new enemy([50, 20], 40, [25, 180], 1.5);
+    enemy6 = new enemy([50, 20], 40, [25, 180], 1);
     enemy6.appear(stage);
     enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.width, enemy6.height);
 
@@ -218,7 +218,6 @@ enemy.prototype.disappear = function(stage1){
 
 
 //complex enemy
-
 function complexEnemy(yPosition, xRange, speed){
 	this.yPosition = yPosition;
 	this.xRange = xRange;
