@@ -4,9 +4,6 @@ var leftMotion = -10;
 var rightMotion = 10;
 var direction = leftMotion;
 
-// var maxLife = 100;
-// var life = 100;
-
 var heroHeight = 50;
 var heroWidth = 30;
 
@@ -23,33 +20,116 @@ var directionRight = true;
 var skew = 0;
 
 var timer = 0;
-var lifescale = 0.5;
 var currLife = 120;
-var affecttime = 0;
-var objectss = []
 
+var startButton;
+var startLabel;
+var hdamag = 0;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-
-function init() {
+function start() {
 	stage = new createjs.Stage("amazingCanvas");
 	canvas = stage.canvas;
-	ctx = canvas.getContext("2d");
-	console.log(canvas.width, canvas.height)
+	startButton = new createjs.Shape();
+	startLabel = new createjs.Text("Start", "bold 75px Courier", "#ff7700");
+	startLabel.x = stage.canvas.width / 2 - 110	;
+	startLabel.y = stage.canvas.height / 2 - 50;
+	
+	startButton.fillCmd = startButton.graphics.beginFill("green").command;
 
-	heroX = (canvas.width-heroWidth)/2;
-	heroY = (canvas.height-heroHeight)/2;
+
+	startButton.graphics.beginStroke("black").drawRect(-200, -100, 400, 200);
+	console.log(stage.canvas.width / 2);
+
+
+	startButton.x = stage.canvas.width / 2;
+	startButton.y = stage.canvas.height / 2;
+
+	startButton.cursor = "pointer";
+
+	startButton.on("click", function(event) {
+		startButton.fillCmd.style = "#00ff00";
+		stage.update(event);
+		stage.removeAllChildren();
+		init();
+	});
+
+	stage.enableMouseOver();
+
+	stage.addChild(startButton);
+	stage.addChild(startLabel);
+	stage.update();
+}
+
+
+
+function gameOver() {
+	//stage = new createjs.Stage("amazingCanvas");
+	
+	restartButton = new createjs.Shape();
+	
+	restartLabel = new createjs.Text("Restart", "bold 75px Courier", "#ff7700");
+	restartLabel.x = stage.canvas.width / 2 - 150;
+	restartLabel.y = stage.canvas.height / 2 - 50;
+	
+	endLabel = new createjs.Text("Game Over :(", "bold 75px Courier", "#ff7700");
+	endLabel.x = stage.canvas.width / 2 - 275;
+	endLabel.y = stage.canvas.height / 2 - 250;
+	
+	restartButton.fillCmd = restartButton.graphics.beginFill("green").command;
+
+
+	restartButton.graphics.beginStroke("black").drawRect(-200, -100, 400, 200);
+	console.log(stage.canvas.width / 2);
+
+
+	restartButton.x = stage.canvas.width / 2;
+	restartButton.y = stage.canvas.height / 2;
+
+	restartButton.cursor = "pointer";
+	restartLabel.cursor = "pointer";
+
+	restartButton.on("click", function(event) {
+		stage.update(event);
+		stage.removeAllChildren();
+		currLife = 120;
+		init();
+	});
+
+
+	stage.enableMouseOver();
+	stage.addChild(restartButton);
+	stage.addChild(restartLabel)
+	stage.addChild(endLabel);
+	stage.update();
+
+
+}
+
+
+function init() {
+	//stage = new createjs.Stage("amazingCanvas");
+	//canvas = stage.canvas;
+	//ctx = canvas.getContext("2d");
+	//console.log(canvas.width, canvas.height)
+
+	heroX = (stage.canvas.width-heroWidth)/2;
+	heroY = (stage.canvas.height-heroHeight)/2;
 
 	life = new createjs.Shape();
 	lifeBack = new createjs.Shape();
-
 	life.graphics.beginFill("green").drawRect(0, 0, 120, 20);
 	lifeBack.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
 	life.x = life.y = 10;
 	lifeBack.x = lifeBack.y = 10;
-	objectss.push(life);
+
+	hero = new createjs.Shape();
+	hero.fillCmd = hero.graphics.beginFill("#333333").command;
+	hero.graphics.drawRect(0, 0, 30, 50);
+    hero.x = heroX;
+    hero.y = heroY;
 
 	hero = new createjs.Shape();
 	hero.fillCmd = hero.graphics.beginFill("#333333").command;
@@ -192,49 +272,42 @@ function tick(event) {
 
 
 	if (checkCollision(bound1, bound2)) {
-		console.log("collision enemy1 and hero");
-
-		if (++affecttime > 20 && currLife > 0) {
-			stage.removeChild(objectss[0]);
-			objectss = [];
-			
-			life = new createjs.Shape();
-			if (currLife < 40)
+		if (hdamag >= 50) {
+			if (currLife <= 20)
 				currLife = 0;
 			else
-				currLife -= 40;
+				currLife-=20;
+			hdamag = 0;
+			stage.removeChild(life);
+			life = new createjs.Shape();
 			life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
 			life.x = life.y = 10;
 			stage.addChild(life);
-			objectss.push(life);
-			affecttime = 0;
+			stage.update();
 		}
 	}
 	stage.update(event);
+	if (currLife <= 0) {
+		stage.removeAllChildren();
+		stage.update();
+		createjs.Ticker.removeAllEventListeners();
+		gameOver();
+	}
+	hdamag++;
 }
-
-
 
 
 function fightDirChange() {
 	enemy1.direction = !enemy1.direction;
-	console.log(enemy1.getBounds());
 	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
-
-
-	life = new createjs.Shape();
 	
-	
-	life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
-	
-	stage.removeChild(objectss[0]);
-	objectss = [];
-	
-	if (currLife < 120)
+	if (currLife < 119)
 		currLife+=2;
 
+	stage.removeChild(life);
+	life = new createjs.Shape();
+	life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
 	life.x = life.y = 10;
 	stage.addChild(life);
-	objectss.push(life);
-
+	stage.update();
 }
