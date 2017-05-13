@@ -14,7 +14,7 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
+//another comment
 
 
 
@@ -72,7 +72,7 @@ setInterval(drawAllTriangles, 1); */
 //Create a stage by getting a reference to the canvas
 // var stage = new createjs.Stage("amazingCanvas");
 
-var stage, output, enemy1, enemy2, enemy3, enemy4, enemy5, guy, canvas, ctx;
+var stage, output, hero, enemy1, enemy2, enemy3, enemy4, enemy5, guy, canvas, ctx;
 
 var leftMotion = -1;
 var rightMotion = 1;
@@ -107,19 +107,17 @@ function init() {
 	stage = new createjs.Stage("amazingCanvas");
 	canvas = stage.canvas;
 	ctx = canvas.getContext("2d");
+	console.log(canvas.width, canvas.height)
 
 	heroX = (canvas.width-heroWidth)/2;
 	heroY = (canvas.height-heroHeight)/2;
 
 
-
-	guy = new createjs.Shape();
-	
-	guy.fillCmd = guy.graphics.beginFill("yellow").command;
-	
-	guy.graphics.drawRect(-25, -25, 50, 70);
-	guy.x = 400;
-	guy.y = 300;
+	hero = new createjs.Shape();
+	hero.fillCmd = hero.graphics.beginFill("#333333").command;
+	hero.graphics.drawRect(heroX, heroY, 30, 50);
+    hero.x = heroX;
+    hero.y = heroY;
 
 
 	enemy1 = new createjs.Shape();
@@ -157,7 +155,8 @@ function init() {
 	enemy3.y = stage.canvas.height - 340;
 	enemy4.y = stage.canvas.height - 460;
 	enemy5.y = stage.canvas.height - 580;
-
+	//
+	
 
 	// var enemy1cont = new createjs.Container();
 	// enemy1cont.x = stage.canvas.width - 50;
@@ -168,7 +167,7 @@ function init() {
 	// enemy1.onMouseOver = handleMouseOver;
 
 	enemy3.setBounds(enemy3.x, enemy3.y, 50, 70);
-	guy.setBounds(guy.x, guy.y, 50, 70);
+	hero.setBounds(hero.x, hero.y, 30, 50);
 
 
 	stage.addChild(enemy1);
@@ -176,7 +175,7 @@ function init() {
 	stage.addChild(enemy3);
 	stage.addChild(enemy4);
 	stage.addChild(enemy5);
-	stage.addChild(guy);
+	stage.addChild(hero);
 
 	// dragger.on("pressmove",function(evt) {
 	// 	// currentTarget will be the container that the event listener was added to:
@@ -187,7 +186,6 @@ function init() {
 	// });
 
 	// stage.addChild(enemy1);
-setInterval(draw, 10);
 
 	stage.update();
 
@@ -224,89 +222,6 @@ setInterval(draw, 10);
 	});
 }
 
-function adjustBounds(obj) {
-	obj.setBounds(obj.x, obj.y, 50, 70);
-	// console.log(obj.getBounds().width);
-}
-
-function checkCollision(rect1, rect2) {
-    if ( rect1.x >= rect2.x + rect2.width || rect1.x + rect1.width <= rect2.x || rect1.y >= rect2.y + rect2.height || rect1.y + rect1.height <= rect2.y ) return false;
-    return true;
-}
-
-function tick(event) {
-	// enemy1cont.x = enemy1cont.x - circleGuy;
-	enemy1.x += direction;
-	enemy2.x += direction;
-	enemy3.x += direction;
-	enemy4.x += direction;
-	enemy5.x += direction;
-
-	if (enemy1.x < 0) { 
-		direction = rightMotion;
-		fightDirChange();
-	}
-	if (enemy1.x > stage.canvas.width) { 
-		direction = leftMotion;
-		fightDirChange();
-	}		
-
-	adjustBounds(enemy3);
-	var bound1 = guy.getBounds();
-	var bound2 = enemy3.getBounds();
-	//if
-
-
-	if (checkCollision(bound1, bound2)) {
-		console.log("collision");
-	}
-	// if checkCollision(enemy3, guy) {
-	// 	console.log("collision");
-	// }
-	//console.log("changes happending");
-	// circle.x = circle.x + circleGuy;
-	//if (dragger.x > stage.canvas.width) { circleGuy = leftMotion }
-
-	draw();	
-	stage.update(event); // important!!
-
-	// console.log("timepasss");
-}
-
-
-// function setDirectionState(ctx, shape) {
-// 	//console.log(shape.x);
-// 	shape.fillCmd.style = shape.direction ? "red" : "black";
-// 	//stage.update(ctx);
-
-// }
-
-
-
-
-function fightDirChange() {
-	enemy1.direction = !enemy1.direction;
-	console.log(enemy1.getBounds());
-	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
-
-	// if (dir < 0) {
-	// 	//newenemy = new createjs.Shape().graphics.beginFill("blue").drawRect(enemy1.x, enemy1y, 50, 70);
-	// 	//enemy1 = newenemy;
-	// 	// var fill = new createjs.Graphics.Fill("blue");
-
-	// 	enemy1.direction = !enemy1.direction;
-	// }else{
-	// 	// enemy1.fillStyle = "black";
-	// 	enemy1.direction = !enemy1.direction;
-	// }
-	// enemy1.fill();
-}
-
-
-
-
-
-
 function keyDownHandler(e) {
     if(e.keyCode == 38) {
         upPressed = true;
@@ -342,6 +257,102 @@ function keyUpHandler(e) {
     }
 }
 
+function adjustBounds(obj) {
+	obj.setBounds(obj.x, obj.y, 50, 70);
+	// console.log(obj.getBounds().width);
+}
+
+function checkCollision(rect1, rect2) {
+    if ( rect1.x >= rect2.x + rect2.width || rect1.x + rect1.width <= rect2.x || rect1.y >= rect2.y + rect2.height || rect1.y + rect1.height <= rect2.y ) return false;
+    return true;
+}
+
+function tick(event) {
+    if(upPressed && heroY > 0) {
+        heroY -= 1;
+    }
+    if(rightPressed && heroX < canvas.width-heroWidth) {
+        heroX += 1;
+        directionRight = true;
+    }
+    if(leftPressed && heroX > 0) {
+        heroX -= 1;
+        directionRight = false;
+    }
+    if(downPressed && heroY < canvas.height-heroHeight) {
+        heroY += 1;
+    }
+    hero.x = heroX;
+    hero.y = heroY;
+
+	// enemy1cont.x = enemy1cont.x - circleGuy;
+	enemy1.x += direction;
+	enemy2.x += direction;
+	enemy3.x += direction;
+	enemy4.x += direction;
+	enemy5.x += direction;
+
+	if (enemy1.x < 0) { 
+		direction = rightMotion;
+		fightDirChange();
+	}
+	if (enemy1.x > stage.canvas.width) { 
+		direction = leftMotion;
+		fightDirChange();
+	}		
+
+	adjustBounds(hero);
+	adjustBounds(enemy3);
+	var bound1 = hero.getBounds();
+	var bound2 = enemy3.getBounds();
+	//if
+
+
+	if (checkCollision(bound1, bound2)) {
+		console.log("collision");
+	}
+	// if checkCollision(enemy3, guy) {
+	// 	console.log("collision");
+	// }
+	//console.log("changes happending");
+	// circle.x = circle.x + circleGuy;
+	//if (dragger.x > stage.canvas.width) { circleGuy = leftMotion }
+
+	stage.update(event); // important!!
+
+	// console.log("timepasss");
+}
+
+
+// function setDirectionState(ctx, shape) {
+// 	//console.log(shape.x);
+// 	shape.fillCmd.style = shape.direction ? "red" : "black";
+// 	//stage.update(ctx);
+
+// }
+
+
+
+
+function fightDirChange() {
+	enemy1.direction = !enemy1.direction;
+	console.log(enemy1.getBounds());
+	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
+
+	// if (dir < 0) {
+	// 	//newenemy = new createjs.Shape().graphics.beginFill("blue").drawRect(enemy1.x, enemy1y, 50, 70);
+	// 	//enemy1 = newenemy;
+	// 	// var fill = new createjs.Graphics.Fill("blue");
+
+	// 	enemy1.direction = !enemy1.direction;
+	// }else{
+	// 	// enemy1.fillStyle = "black";
+	// 	enemy1.direction = !enemy1.direction;
+	// }
+	// enemy1.fill();
+}
+
+
 /*function drawPlayerState(){
     stateCtx.font = "16px Arial";
     stateCtx.fillStyle = "#101010";
@@ -357,65 +368,6 @@ function keyUpHandler(e) {
     stateCtx.fill();
     stateCtx.closePath();
 }*/
-
-function drawhero() {
-    ctx.beginPath();
-    //ctx.transform(1, 0, 1/skew, 1, 0, 0);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if(spacePressed){
-	   if(directionRight){
-	    	skew = 0.3;
-	    }
-	    else{
-	    	skew = -0.3;
-	    }
-	}
-	else{
-	    //skew = 0;
-	    if(skew > -0.01 && skew < 0.01	){
-	    	skew = 0;
-	    }
-	    else{ 
-		    if(skew > 0){
-		    	skew -= 0.05;
-		    }
-		    else if(skew < 0){
-		    	skew += 0.05;
-		    }//*/
-		}
-	}
-    ctx.transform(1, 0, skew, 1, -skew * (heroY + heroHeight), 0);
-    ctx.rect(heroX, heroY, heroWidth, heroHeight);
-    ctx.fillStyle = "#333333";
-    ctx.fill();
-    ctx.closePath();
-}
-
-function draw() {
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    //drawPlayerState()
-    drawhero();
-    
-    if(upPressed && heroY > 0) {
-        heroY -= 1;
-    }
-    if(rightPressed && heroX < canvas.width-heroWidth) {
-        heroX += 1;
-        directionRight = true;
-    }
-    if(leftPressed && heroX > 0) {
-        heroX -= 1;
-        directionRight = false;
-    }
-    if(downPressed && heroY < canvas.height-heroHeight) {
-        heroY += 1;
-    }
-}
-
-
-
-
 
 
 // //Create a Shape DisplayObject.
