@@ -23,7 +23,6 @@ var timer = 0;
 
 var startButton;
 var startLabel;
-var hdamag = 0;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -170,6 +169,7 @@ function hero(size, startingX, startingY, speed, maxLife){
 	this.maxLife = maxLife;
 	this.currLife = null;
 	this.direction = null;
+	this.damageCool = null;
 	this.graphic = null;
 }
 hero.prototype.appear = function(stage1){
@@ -182,6 +182,7 @@ hero.prototype.appear = function(stage1){
 	this.graphic.y = this.yPosition;
 	this.direction = 1;
 	this.currLife = this.maxLife;
+	this.damageCool = 0;
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
@@ -191,6 +192,7 @@ hero.prototype.disappear = function(stage1){
 	this.yPosition = null;
 	this.currLife = null;
 	this.direction = null;
+	this.damageCool = null;
 	this.graphic = null;
 }
 
@@ -306,18 +308,10 @@ function tick(event) {
 
 
 	if (checkCollision(bound1, bound2)) {
-		if (hdamag >= 50) {
-			if (hero1.currLife <= 20)
-				hero1.currLife = 0;
-			else
-				hero1.currLife-=20;
-			hdamag = 0;
-			stage.removeChild(lifeGage);
-			lifeGage = new createjs.Shape();
-			lifeGage.graphics.beginFill("green").drawRect(0, 0, hero1.currLife, 20);
-			lifeGage.x = lifeGage.y = 10;
-			stage.addChild(lifeGage);
-			stage.update();
+		if (hero1.damageCool >= 50) {
+			if (hero1.currLife <= 20)	hero1.currLife = 0;
+			else 						hero1.currLife-=20;
+			hero1.damageCool = 0;
 		}
 	}
 	if (hero1.currLife <= 0) {
@@ -334,7 +328,8 @@ function tick(event) {
 	stage.addChild(lifeGage);
 	stage.update();
 
-	hdamag++;
+	hero1.damageCool++;
+
 	if (hero1.currLife < 119)	hero1.currLife+=0.002;
 
 	stage.update(event);
