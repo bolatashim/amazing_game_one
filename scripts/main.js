@@ -1,18 +1,5 @@
 var stage, output, lifeGage, hero1, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
 
-var leftMotion = -10;
-var rightMotion = 10;
-var direction = leftMotion;
-
-var heroHeight = 50;
-var heroWidth = 30;
-
-var startingPositionX;
-var startingPositionY;
-
-var heroX;
-var heroY;
-
 var upPressed = false;
 var rightPressed = false;
 var leftPressed = false;
@@ -111,22 +98,19 @@ function gameOver() {
 	stage.addChild(restartLabel)
 	stage.addChild(endLabel);
 	stage.update();
-
-
 }
 
 
 function init() {
-	startingPositionX = (stage.canvas.width-heroWidth)/2;
-	startingPositionY = (stage.canvas.height-heroHeight)/2;
+    hero1 = new hero([30,50], 3, 120);
+	var startingPositionX = (stage.canvas.width-hero1.width)/2;
+	var startingPositionY = (stage.canvas.height-hero1.height)/2;
+    hero1.appear(stage, startingPositionX, startingPositionY);
+    hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.width, hero1.height);
 
-    hero1 = new hero([30,50], startingPositionX, startingPositionY, 10, 120);
-    hero1.appear(stage);
-    hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.size[0], hero1.size[1]);
-
-    enemy6 = new enemy([50, 70], 40, [25, 180], 4);
+    enemy6 = new enemy([50, 20], 40, [25, 180], 1.5);
     enemy6.appear(stage);
-    enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.size[0], enemy6.size[1]);
+    enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.width, enemy6.height);
 
 	drawLifeBox();
 	drawLifeGage();
@@ -167,10 +151,10 @@ function keyUpHandler(e) {
     else if(e.keyCode == 32) 	spacePressed = false;
 }
 
-function hero(size, startingX, startingY, speed, maxLife){
-	this.size = size
-	this.startingX = startingX;
-	this.startingY = startingY;
+function hero(size, speed, maxLife){
+	this.size = size;
+	this.width = size[0];
+	this.height = size[1];
 	this.xPosition = null;
 	this.yPosition = null;
 	this.speed = speed;
@@ -180,12 +164,12 @@ function hero(size, startingX, startingY, speed, maxLife){
 	this.damageCool = null;
 	this.graphic = null;
 }
-hero.prototype.appear = function(stage1){
+hero.prototype.appear = function(stage1, startingX, startingY){
 	this.graphic = new createjs.Shape();
 	this.graphic.fillCmd = this.graphic.graphics.beginFill("#333333").command;
-	this.graphic.graphics.drawRect(0, 0, this.size[0], this.size[1]);
-	this.xPosition = this.startingX;
-	this.yPosition = this.startingY;
+	this.graphic.graphics.drawRect(0, 0, this.width, this.height);
+	this.xPosition = startingX;
+	this.yPosition = startingY;
 	this.graphic.x = this.xPosition;
 	this.graphic.y = this.yPosition;
 	this.direction = 1;
@@ -206,6 +190,8 @@ hero.prototype.disappear = function(stage1){
 
 function enemy(size, yPosition, xRange, speed){
 	this.size = size
+	this.width = size[0];
+	this.height = size[1];
 	this.xPosition = null;
 	this.yPosition = yPosition;
 	this.xRange = xRange;
@@ -216,7 +202,7 @@ function enemy(size, yPosition, xRange, speed){
 enemy.prototype.appear = function(stage1){
 	this.graphic = new createjs.Shape();
 	this.graphic.fillCmd = this.graphic.graphics.beginFill("red").command;
-	this.graphic.graphics.drawRect(0, 0, this.size[0], this.size[1]);
+	this.graphic.graphics.drawRect(0, 0, this.width, this.height);
 	this.xPosition = Math.random() * (this.xRange[1] -  this.xRange[0]) + this.xRange[0];
 	this.graphic.x = this.xPosition;
 	this.graphic.y = this.yPosition;
@@ -230,8 +216,8 @@ enemy.prototype.disappear = function(stage1){
 	this.graphic = null;
 }
 
-//complex enemy
 
+//complex enemy
 
 function complexEnemy(yPosition, xRange, speed){
 	this.yPosition = yPosition;
@@ -282,6 +268,27 @@ function checkCollision(rect1, rect2) {
     return true;
 }
 
+function heroControl(hero){
+	ds = hero.speed;
+    if(upPressed && hero.yPosition-ds > 0) 							hero.yPosition -= ds;
+    if(rightPressed && hero.xPosition+ds < canvas.width-hero.width) hero.xPosition += ds;
+    if(leftPressed && hero.xPosition-ds > 0) 						hero.xPosition -= ds;
+    if(downPressed && hero.yPosition+ds < canvas.height-hero.height)hero.yPosition += ds;
+
+    if(rightPressed && hero.xPosition+ds < canvas.width-hero.width)	hero.direction = 1;
+    if(leftPressed && hero.xPosition-ds > 0)						hero.direction = -1;
+
+    var skew
+    if(spacePressed){
+    	if(hero.direction == 1) skew = 17;
+    	else					skew = -17;
+    }
+    else skew = 0;
+    hero.graphic.skewX= skew;
+    hero.graphic.x = hero.xPosition + hero.height * Math.sin(skew*Math.PI/180);
+    hero.graphic.y = hero.yPosition + hero.height * (1 - Math.cos(skew*Math.PI/180));
+}
+
 function enemyMove(enemy){
 	if(enemy.graphic.x <= enemy.xRange[0])			enemy.direction = 1;
 	else if(enemy.graphic.x >= enemy.xRange[1]) 	enemy.direction = -1;
@@ -289,24 +296,7 @@ function enemyMove(enemy){
 }
 
 function tick(event) {
-	ds = hero1.speed;
-    if(upPressed && hero1.yPosition > 0) 							hero1.yPosition -= ds;
-    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.xPosition += ds;
-    if(leftPressed && hero1.xPosition > 0) 							hero1.xPosition -= ds;
-    if(downPressed && hero1.yPosition < canvas.height-heroHeight) 	hero1.yPosition += ds;
-
-    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.direction = 1;
-    if(leftPressed && hero1.xPosition > 0) 							hero1.direction = -1;
-
-    var skew
-    if(spacePressed){
-    	if(hero1.direction == 1) skew = 17;
-    	else					 skew = -17;
-    }
-    else skew = 0;
-    hero1.graphic.skewX= skew;
-    hero1.graphic.x = hero1.xPosition + hero1.size[1] * Math.sin(skew*Math.PI/180);
-    hero1.graphic.y = hero1.yPosition + hero1.size[1] * (1 - Math.cos(skew*Math.PI/180));
+	heroControl(hero1);
 
 	enemyMove(enemy6);
 
@@ -323,6 +313,7 @@ function tick(event) {
 			hero1.damageCool = 0;
 		}
 	}
+
 	if (hero1.currLife <= 0) {
 		stage.removeAllChildren();
 		stage.update();
