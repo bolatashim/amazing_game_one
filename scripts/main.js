@@ -145,18 +145,18 @@ function init() {
 }
 
 function keyDownHandler(e) {
-    if(e.keyCode == 38) 		{upPressed = true;}
-    else if(e.keyCode == 39) 	{rightPressed = true;}
-    else if(e.keyCode == 37) 	{leftPressed = true;}
-    else if(e.keyCode == 40) 	{downPressed = true;}
-    else if(e.keyCode == 32) 	{spacePressed = true;}
+    if(e.keyCode == 38) 		upPressed = true;
+    else if(e.keyCode == 39) 	rightPressed = true;
+    else if(e.keyCode == 37) 	leftPressed = true;
+    else if(e.keyCode == 40) 	downPressed = true;
+    else if(e.keyCode == 32) 	spacePressed = true;
 }
 function keyUpHandler(e) {
-    if(e.keyCode == 38) 		{upPressed = false;}
-    else if(e.keyCode == 39) 	{rightPressed = false;}
-    else if(e.keyCode == 37) 	{leftPressed = false;}
-    else if(e.keyCode == 40) 	{downPressed = false;}
-    else if(e.keyCode == 32) 	{spacePressed = false;}
+    if(e.keyCode == 38) 		upPressed = false;
+    else if(e.keyCode == 39) 	rightPressed = false;
+    else if(e.keyCode == 37) 	leftPressed = false;
+    else if(e.keyCode == 40) 	downPressed = false;
+    else if(e.keyCode == 32) 	spacePressed = false;
 }
 
 function hero(size, startingX, startingY, speed, maxLife){
@@ -275,8 +275,8 @@ function checkCollision(rect1, rect2) {
 }
 
 function enemyMove(enemy){
-	if(enemy.graphic.x <= enemy.xRange[0])			{enemy.direction = 1;}
-	else if(enemy.graphic.x >= enemy.xRange[1]) 	{enemy.direction = -1;}
+	if(enemy.graphic.x <= enemy.xRange[0])			enemy.direction = 1;
+	else if(enemy.graphic.x >= enemy.xRange[1]) 	enemy.direction = -1;
 	enemy.graphic.x += enemy.direction * enemy.speed;
 }
 
