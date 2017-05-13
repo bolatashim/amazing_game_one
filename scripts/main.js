@@ -58,7 +58,7 @@ function init() {
     hero.y = heroY;
 
     enemy6 = new enemy(40, [25, 180], 4);
-    enemy6.creatGraphic(stage);
+    enemy6.appear(stage);
 
 	enemy1 = new createjs.Shape();
 	enemy1.fillCmd = enemy1.graphics.beginFill("red").command;
@@ -110,7 +110,7 @@ function enemy(yPosition, xRange, speed){
 	this.graphic = {}
 	this.direction = 0
 }
-enemy.prototype.creatGraphic = function(stage1){
+enemy.prototype.appear = function(stage1){
 	this.graphic = new createjs.Shape();
 	this.graphic.fillCmd = this.graphic.graphics.beginFill("red").command;
 	this.graphic.graphics.drawRect(0, 0, 50, 30);
@@ -120,7 +120,7 @@ enemy.prototype.creatGraphic = function(stage1){
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
-enemy.prototype.removeGraphic = function(stage1){
+enemy.prototype.disappear = function(stage1){
 	stage1.rmoveChild(this.graphic);
 	this.direction = 0;
 }
