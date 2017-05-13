@@ -48,9 +48,16 @@ function start() {
 	startButton.y = stage.canvas.height / 2;
 
 	startButton.cursor = "pointer";
+	startLabel.cursor = "pointer";
 
 	startButton.on("click", function(event) {
 		startButton.fillCmd.style = "#00ff00";
+		stage.update(event);
+		stage.removeAllChildren();
+		init();
+	});
+
+	startLabel.on("click", function(event) {
 		stage.update(event);
 		stage.removeAllChildren();
 		init();
@@ -92,6 +99,13 @@ function gameOver() {
 	restartLabel.cursor = "pointer";
 
 	restartButton.on("click", function(event) {
+		stage.update(event);
+		stage.removeAllChildren();
+		currLife = 120;
+		init();
+	});
+
+	restartLabel.on("click", function(event) {
 		stage.update(event);
 		stage.removeAllChildren();
 		currLife = 120;
