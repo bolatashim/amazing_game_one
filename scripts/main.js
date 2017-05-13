@@ -120,13 +120,6 @@ function init() {
 	startingPositionX = (stage.canvas.width-heroWidth)/2;
 	startingPositionY = (stage.canvas.height-heroHeight)/2;
 
-	var lifeBox = new createjs.Shape();
-	lifeGage = new createjs.Shape();
-	lifeGage.graphics.beginFill("green").drawRect(0, 0, 120, 20);
-	lifeBox.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
-	lifeGage.x = lifeGage.y = 10;
-	lifeBox.x = lifeBox.y = 10;
-
     hero1 = new hero([30,50], startingPositionX, startingPositionY, 1, 120);
     hero1.appear(stage);
     hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.size[0], hero1.size[1]);
@@ -135,13 +128,28 @@ function init() {
     enemy6.appear(stage);
     enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.size[0], enemy6.size[1]);
 
-	stage.addChild(lifeGage);
-	stage.addChild(lifeBox);
+	drawLifeBox();
+	drawLifeGage();
 
 	stage.update();
 
 	createjs.Ticker.on("tick", tick); //executes tick every frame
 	createjs.Ticker.setFPS(100);
+}
+
+function drawLifeBox(){
+	var lifeBox = new createjs.Shape();
+	lifeBox.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
+	lifeBox.x = lifeBox.y = 10;
+	stage.addChild(lifeBox);
+}
+
+function drawLifeGage(){
+	stage.removeChild(lifeGage);
+	lifeGage = new createjs.Shape();
+	lifeGage.graphics.beginFill("green").drawRect(0, 0, 120*hero1.currLife/hero1.maxLife, 20);
+	lifeGage.x = lifeGage.y = 10;
+	stage.addChild(lifeGage);
 }
 
 function keyDownHandler(e) {
@@ -321,11 +329,7 @@ function tick(event) {
 		gameOver();
 	}
 
-	stage.removeChild(lifeGage);
-	lifeGage = new createjs.Shape();
-	lifeGage.graphics.beginFill("green").drawRect(0, 0, hero1.currLife, 20);
-	lifeGage.x = lifeGage.y = 10;
-	stage.addChild(lifeGage);
+	drawLifeGage();
 	stage.update();
 
 	hero1.damageCool++;
