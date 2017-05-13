@@ -221,6 +221,22 @@ function tick(event) {
 
 	if (checkCollision(bound1, bound2)) {
 		console.log("collision enemy3 and hero");
+
+		if (++affecttime > 20 && currLife > 0) {
+			stage.removeChild(objectss[0]);
+			objectss = [];
+			
+			life = new createjs.Shape();
+			if (currLife < 40)
+				currLife = 0;
+			else
+				currLife -= 40;
+			life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+			life.x = life.y = 10;
+			stage.addChild(life);
+			objectss.push(life);
+			affecttime = 0;
+		}
 	}
 
 	stage.update(event);
@@ -233,4 +249,21 @@ function fightDirChange() {
 	enemy1.direction = !enemy1.direction;
 	console.log(enemy1.getBounds());
 	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
+
+
+	life = new createjs.Shape();
+	
+	
+	life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+	
+	stage.removeChild(objectss[0]);
+	objectss = [];
+	
+	if (currLife < 120)
+		currLife+=2;
+
+	life.x = life.y = 10;
+	stage.addChild(life);
+	objectss.push(life);
+
 }
