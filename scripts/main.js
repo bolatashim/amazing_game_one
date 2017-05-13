@@ -120,7 +120,7 @@ function init() {
 	startingPositionX = (stage.canvas.width-heroWidth)/2;
 	startingPositionY = (stage.canvas.height-heroHeight)/2;
 
-    hero1 = new hero([30,50], startingPositionX, startingPositionY, 1, 120);
+    hero1 = new hero([30,50], startingPositionX, startingPositionY, 10, 120);
     hero1.appear(stage);
     hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.size[0], hero1.size[1]);
 
@@ -289,10 +289,11 @@ function enemyMove(enemy){
 }
 
 function tick(event) {
-    if(upPressed && hero1.yPosition > 0) 							hero1.yPosition -= 1;
-    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.xPosition += 1;
-    if(leftPressed && hero1.xPosition > 0) 							hero1.xPosition -= 1;
-    if(downPressed && hero1.yPosition < canvas.height-heroHeight) 	hero1.yPosition += 1;
+	ds = hero1.speed;
+    if(upPressed && hero1.yPosition > 0) 							hero1.yPosition -= ds;
+    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.xPosition += ds;
+    if(leftPressed && hero1.xPosition > 0) 							hero1.xPosition -= ds;
+    if(downPressed && hero1.yPosition < canvas.height-heroHeight) 	hero1.yPosition += ds;
 
     if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.direction = 1;
     if(leftPressed && hero1.xPosition > 0) 							hero1.direction = -1;
