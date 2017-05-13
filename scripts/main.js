@@ -140,6 +140,10 @@ function init() {
 	enemy1.y = stage.canvas.height - 100;
 	enemy1.setBounds(enemy1.x, enemy1.y, 50, 70);
 
+	//enemy10 = new complexEnemy(200, [25, 500], 5);
+    //enemy10.appear(stage);
+
+
 	stage.addChild(enemy1);
 	stage.addChild(lifeGage);
 	stage.addChild(lifeBox);
@@ -222,6 +226,55 @@ enemy.prototype.disappear = function(stage1){
 	stage1.removeChild(this.graphic);
 	this.direction = 0;
 }
+
+//complex enemy
+
+
+function complexEnemy(yPosition, xRange, speed){
+	this.yPosition = yPosition;
+	this.xRange = xRange;
+	this.speed = speed;
+	this.graphic = {};
+	this.direction = 0;
+}
+
+complexEnemy.prototype.appear = function(stage1){
+	this.graphic = new createjs.Container();
+    
+    var ehead = new createjs.Shape();
+    var ebody = new createjs.Shape();
+    var eye1 = new createjs.Shape();
+	var eye2 = new createjs.Shape();
+    ehead.graphics.beginFill("white").beginStroke("gray").drawCircle(0,0,25);
+    ebody.graphics.beginFill("white").beginStroke("gray").drawRect(0,0,50,70);
+    eye1.graphics.beginFill("white").beginStroke("black").drawCircle(0,0,7)
+    eye2.graphics.beginFill("white").beginStroke("black").drawCircle(0,0,7)
+	
+	ebody.x = -25;
+	eye1.x = -10;
+	eye2.x = 10;
+
+	
+	this.graphic.addChild(ebody);
+	this.graphic.addChild(ehead);
+	this.graphic.addChild(eye1);
+	this.graphic.addChild(eye2);
+	this.graphic.setBounds(0, 0, 75, 120);
+	this.graphic.x = Math.random() * (this.xRange[1] -  this.xRange[0]) + this.xRange[0];
+	this.graphic.y = this.yPosition;
+	this.direction = Math.floor(Math.random() * 2) * 2 - 1;
+	stage1.addChild(this.graphic);
+	return this.graphic;
+}
+
+
+complexEnemy.prototype.disappear = function(stage1){
+	stage1.removeChild(this.graphic);
+	this.direction = 0;
+}
+
+
+
 
 function adjustBounds(obj) {
 	obj.setBounds(obj.x, obj.y, 50, 70);
