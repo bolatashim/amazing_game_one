@@ -20,7 +20,6 @@ var downPressed = false;
 var spacePressed = false;
 
 var timer = 0;
-var currLife = 120;
 
 var startButton;
 var startLabel;
@@ -73,8 +72,6 @@ function start() {
 
 
 function gameOver() {
-	//stage = new createjs.Stage("amazingCanvas");
-	
 	restartButton = new createjs.Shape();
 	
 	restartLabel = new createjs.Text("Restart", "bold 75px Courier", "#ff7700");
@@ -101,17 +98,14 @@ function gameOver() {
 	restartButton.on("click", function(event) {
 		stage.update(event);
 		stage.removeAllChildren();
-		currLife = 120;
 		init();
 	});
 
 	restartLabel.on("click", function(event) {
 		stage.update(event);
 		stage.removeAllChildren();
-		currLife = 120;
 		init();
 	});
-
 
 	stage.enableMouseOver();
 	stage.addChild(restartButton);
@@ -124,11 +118,6 @@ function gameOver() {
 
 
 function init() {
-	//stage = new createjs.Stage("amazingCanvas");
-	//canvas = stage.canvas;
-	//ctx = canvas.getContext("2d");
-	//console.log(canvas.width, canvas.height)
-
 	startingPositionX = (stage.canvas.width-heroWidth)/2;
 	startingPositionY = (stage.canvas.height-heroHeight)/2;
 
@@ -139,7 +128,7 @@ function init() {
 	lifeGage.x = lifeGage.y = 10;
 	lifeBox.x = lifeBox.y = 10;
 
-    hero1 = new hero([30,50], startingPositionX, startingPositionY, 1);
+    hero1 = new hero([30,50], startingPositionX, startingPositionY, 1, 120);
     hero1.appear(stage);
     hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.size[0], hero1.size[1]);
 
@@ -171,15 +160,17 @@ function keyUpHandler(e) {
     else if(e.keyCode == 32) 	{spacePressed = false;}
 }
 
-function hero(size, startingX, startingY, speed){
+function hero(size, startingX, startingY, speed, maxLife){
 	this.size = size
 	this.startingX = startingX;
 	this.startingY = startingY;
 	this.xPosition = null;
 	this.yPosition = null;
 	this.speed = speed;
-	this.graphic = {}
+	this.maxLife = maxLife;
+	this.currLife = null;
 	this.direction = null;
+	this.graphic = null;
 }
 hero.prototype.appear = function(stage1){
 	this.graphic = new createjs.Shape();
@@ -190,12 +181,17 @@ hero.prototype.appear = function(stage1){
 	this.graphic.x = this.xPosition;
 	this.graphic.y = this.yPosition;
 	this.direction = 1;
+	this.currLife = this.maxLife;
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
 hero.prototype.disappear = function(stage1){
 	stage1.removeChild(this.graphic);
+	this.xPosition = null;
+	this.yPosition = null;
+	this.currLife = null;
 	this.direction = null;
+	this.graphic = null;
 }
 
 function enemy(size, yPosition, xRange, speed){
@@ -204,8 +200,8 @@ function enemy(size, yPosition, xRange, speed){
 	this.yPosition = yPosition;
 	this.xRange = xRange;
 	this.speed = speed;
-	this.graphic = {};
-	this.direction = 0;
+	this.direction = null;
+	this.graphic = null;
 }
 enemy.prototype.appear = function(stage1){
 	this.graphic = new createjs.Shape();
@@ -220,7 +216,8 @@ enemy.prototype.appear = function(stage1){
 }
 enemy.prototype.disappear = function(stage1){
 	stage1.removeChild(this.graphic);
-	this.direction = 0;
+	this.direction = null;
+	this.graphic = null;
 }
 
 //complex enemy
@@ -230,10 +227,9 @@ function complexEnemy(yPosition, xRange, speed){
 	this.yPosition = yPosition;
 	this.xRange = xRange;
 	this.speed = speed;
-	this.graphic = {};
-	this.direction = 0;
+	this.direction = null;
+	this.graphic = null;
 }
-
 complexEnemy.prototype.appear = function(stage1){
 	this.graphic = new createjs.Container();
     
@@ -249,7 +245,6 @@ complexEnemy.prototype.appear = function(stage1){
 	ebody.x = -25;
 	eye1.x = -10;
 	eye2.x = 10;
-
 	
 	this.graphic.addChild(ebody);
 	this.graphic.addChild(ehead);
@@ -262,15 +257,11 @@ complexEnemy.prototype.appear = function(stage1){
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
-
-
 complexEnemy.prototype.disappear = function(stage1){
 	stage1.removeChild(this.graphic);
-	this.direction = 0;
+	this.direction = null;
+	this.graphic = null;
 }
-
-
-
 
 function adjustBounds(obj) {
 	obj.setBounds(obj.x, obj.y, 50, 70);
@@ -288,20 +279,13 @@ function enemyMove(enemy){
 }
 
 function tick(event) {
-    if(upPressed && hero1.yPosition > 0) {
-        hero1.yPosition -= 1;
-    }
-    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) {
-        hero1.xPosition += 1;
-        hero1.direction = 1;
-    }
-    if(leftPressed && hero1.xPosition > 0) {
-        hero1.xPosition -= 1;
-        hero1.direction = -1;
-    }
-    if(downPressed && hero1.yPosition < canvas.height-heroHeight) {
-        hero1.yPosition += 1;
-    }
+    if(upPressed && hero1.yPosition > 0) 							hero1.yPosition -= 1;
+    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.xPosition += 1;
+    if(leftPressed && hero1.xPosition > 0) 							hero1.xPosition -= 1;
+    if(downPressed && hero1.yPosition < canvas.height-heroHeight) 	hero1.yPosition += 1;
+
+    if(rightPressed && hero1.xPosition < canvas.width-heroWidth) 	hero1.direction = 1;
+    if(leftPressed && hero1.xPosition > 0) 							hero1.direction = -1;
 
     var skew
     if(spacePressed){
@@ -325,20 +309,20 @@ function tick(event) {
 
 	if (checkCollision(bound1, bound2)) {
 		if (hdamag >= 50) {
-			if (currLife <= 20)
-				currLife = 0;
+			if (hero1.currLife <= 20)
+				hero1.currLife = 0;
 			else
-				currLife-=20;
+				hero1.currLife-=20;
 			hdamag = 0;
 			stage.removeChild(lifeGage);
 			lifeGage = new createjs.Shape();
-			lifeGage.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+			lifeGage.graphics.beginFill("green").drawRect(0, 0, hero1.currLife, 20);
 			lifeGage.x = lifeGage.y = 10;
 			stage.addChild(lifeGage);
 			stage.update();
 		}
 	}
-	if (currLife <= 0) {
+	if (hero1.currLife <= 0) {
 		stage.removeAllChildren();
 		stage.update();
 		createjs.Ticker.removeAllEventListeners();
@@ -347,13 +331,13 @@ function tick(event) {
 
 	stage.removeChild(lifeGage);
 	lifeGage = new createjs.Shape();
-	lifeGage.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+	lifeGage.graphics.beginFill("green").drawRect(0, 0, hero1.currLife, 20);
 	lifeGage.x = lifeGage.y = 10;
 	stage.addChild(lifeGage);
 	stage.update();
 
 	hdamag++;
-	if (currLife < 119)	currLife+=0.002;
+	if (hero1.currLife < 119)	hero1.currLife+=0.002;
 
 	stage.update(event);
 }
