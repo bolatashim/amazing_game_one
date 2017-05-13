@@ -1,4 +1,4 @@
-var stage, output, hero, enemy1, enemy2, enemy3, enemy4, enemy5, guy, canvas, ctx;
+var stage, output, hero, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
 
 var leftMotion = -10;
 var rightMotion = 10;
@@ -57,48 +57,19 @@ function init() {
     hero.x = heroX;
     hero.y = heroY;
 
+    enemy6 = new enemy(40, [25, 180], 4);
+    enemy6.creatGraphic(stage);
+
 	enemy1 = new createjs.Shape();
-	enemy2 = new createjs.Shape();
-	enemy3 = new createjs.Shape();
-	enemy4 = new createjs.Shape();
-	enemy5 = new createjs.Shape();
-
 	enemy1.fillCmd = enemy1.graphics.beginFill("red").command;
-	enemy2.fillCmd = enemy2.graphics.beginFill("red").command;
-	enemy3.fillCmd = enemy3.graphics.beginFill("red").command;
-	enemy4.fillCmd = enemy4.graphics.beginFill("red").command;
-	enemy5.fillCmd = enemy5.graphics.beginFill("red").command;
-	
-
-
-	enemy1.graphics.drawRect(0, 0, 50, 70);
-	enemy2.graphics.drawRect(0, 0, 50, 70);
-	enemy3.graphics.drawRect(0, 0, 50, 70);
-	enemy4.graphics.drawRect(0, 0, 50, 70);
-	enemy5.graphics.drawRect(0, 0, 50, 70);
-
-
+	enemy1.graphics.drawRect(0, 0, 50, 70)
 	enemy1.x = stage.canvas.width - 50;
-	enemy2.x = stage.canvas.width - 50;
-	enemy3.x = stage.canvas.width - 50;
-	enemy4.x = stage.canvas.width - 50;
-	enemy5.x = stage.canvas.width - 50;
-
-
 	enemy1.y = stage.canvas.height - 100;
-	enemy2.y = stage.canvas.height - 220;
-	enemy3.y = stage.canvas.height - 340;
-	enemy4.y = stage.canvas.height - 460;
-	enemy5.y = stage.canvas.height - 580;
+	enemy1.setBounds(enemy1.x, enemy1.y, 50, 70);
 
-	enemy3.setBounds(enemy3.x, enemy3.y, 50, 70);
 	hero.setBounds(hero.x, hero.y, 30, 50);
 
 	stage.addChild(enemy1);
-	stage.addChild(enemy2);
-	stage.addChild(enemy3);
-	stage.addChild(enemy4);
-	stage.addChild(enemy5);
 	stage.addChild(hero);
 	stage.addChild(life);
 	stage.addChild(lifeBack);
@@ -115,62 +86,43 @@ function init() {
 		console.log("clicked");
 		stage.update(event);
 	});
-
-	enemy2.on("click", function(event){
-		enemy2.fillCmd.style = "green";
-		console.log("clicked");
-		stage.update(event);
-	});
-	enemy3.on("click", function(event){
-		enemy3.fillCmd.style = "green";
-		console.log("clicked");
-		stage.update(event);
-	});
-	enemy4.on("click", function(event){
-		enemy4.fillCmd.style = "green";
-		console.log("clicked");
-		stage.update(event);
-	});
-	enemy5.on("click", function(event){
-		enemy5.fillCmd.style = "green";
-		console.log("clicked");
-		stage.update(event);
-	});
 }
 
 function keyDownHandler(e) {
-    if(e.keyCode == 38) {
-        upPressed = true;
-    }
-    else if(e.keyCode == 39) {
-        rightPressed = true;
-    }
-    else if(e.keyCode == 37) {
-        leftPressed = true;
-    }
-    else if(e.keyCode == 40) {
-        downPressed = true;
-    }
-    else if(e.keyCode == 32) {
-    	spacePressed = true;
-    }
+    if(e.keyCode == 38) 		{upPressed = true;}
+    else if(e.keyCode == 39) 	{rightPressed = true;}
+    else if(e.keyCode == 37) 	{leftPressed = true;}
+    else if(e.keyCode == 40) 	{downPressed = true;}
+    else if(e.keyCode == 32) 	{spacePressed = true;}
 }
 function keyUpHandler(e) {
-    if(e.keyCode == 38) {
-        upPressed = false;
-    }
-    else if(e.keyCode == 39) {
-        rightPressed = false;
-    }
-    else if(e.keyCode == 37) {
-        leftPressed = false;
-    }
-    else if(e.keyCode == 40) {
-        downPressed = false;
-    }
-    else if(e.keyCode == 32) {
-    	spacePressed = false;
-    }
+    if(e.keyCode == 38) 		{upPressed = false;}
+    else if(e.keyCode == 39) 	{rightPressed = false;}
+    else if(e.keyCode == 37) 	{leftPressed = false;}
+    else if(e.keyCode == 40) 	{downPressed = false;}
+    else if(e.keyCode == 32) 	{spacePressed = false;}
+}
+
+function enemy(yPosition, xRange, speed){
+	this.yPosition = yPosition;
+	this.xRange = xRange;
+	this.speed = speed;
+	this.graphic = {}
+	this.direction = 0
+}
+enemy.prototype.creatGraphic = function(stage1){
+	this.graphic = new createjs.Shape();
+	this.graphic.fillCmd = this.graphic.graphics.beginFill("red").command;
+	this.graphic.graphics.drawRect(0, 0, 50, 30);
+	this.graphic.x = Math.random() * (this.xRange[1] -  this.xRange[0]) + this.xRange[0];
+	this.graphic.y = this.yPosition;
+	this.direction = Math.floor(Math.random() * 2) * 2 - 1;
+	stage1.addChild(this.graphic);
+	return this.graphic;
+}
+enemy.prototype.removeGraphic = function(stage1){
+	stage1.rmoveChild(this.graphic);
+	this.direction = 0;
 }
 
 function adjustBounds(obj) {
@@ -180,6 +132,12 @@ function adjustBounds(obj) {
 function checkCollision(rect1, rect2) {
     if ( rect1.x >= rect2.x + rect2.width || rect1.x + rect1.width <= rect2.x || rect1.y >= rect2.y + rect2.height || rect1.y + rect1.height <= rect2.y ) return false;
     return true;
+}
+
+function enemyMove(enemy){
+	if(enemy.graphic.x <= enemy.xRange[0])			{enemy.direction = 1;}
+	else if(enemy.graphic.x >= enemy.xRange[1]) 	{enemy.direction = -1;}
+	enemy.graphic.x += enemy.direction * enemy.speed;
 }
 
 function tick(event) {
@@ -215,10 +173,8 @@ function tick(event) {
 
 
 	enemy1.x += direction;
-	enemy2.x += direction;
-	enemy3.x += direction;
-	enemy4.x += direction;
-	enemy5.x += direction;
+
+	enemyMove(enemy6);
 
 	if (enemy1.x < 0) { 
 		direction = rightMotion;
@@ -230,13 +186,13 @@ function tick(event) {
 	}		
 
 	adjustBounds(hero);
-	adjustBounds(enemy3);
+	adjustBounds(enemy1);
 	var bound1 = hero.getBounds();
-	var bound2 = enemy3.getBounds();
+	var bound2 = enemy1.getBounds();
 
 
 	if (checkCollision(bound1, bound2)) {
-		console.log("collision enemy3 and hero");
+		console.log("collision enemy1 and hero");
 
 		if (++affecttime > 20 && currLife > 0) {
 			stage.removeChild(objectss[0]);
