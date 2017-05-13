@@ -1,4 +1,4 @@
-var stage, output, hero1, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
+var stage, output, lifeGage, hero1, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
 
 var leftMotion = -10;
 var rightMotion = 10;
@@ -118,12 +118,12 @@ function init() {
 	startingPositionX = (stage.canvas.width-heroWidth)/2;
 	startingPositionY = (stage.canvas.height-heroHeight)/2;
 
-	life = new createjs.Shape();
-	lifeBack = new createjs.Shape();
-	life.graphics.beginFill("green").drawRect(0, 0, 120, 20);
-	lifeBack.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
-	life.x = life.y = 10;
-	lifeBack.x = lifeBack.y = 10;
+	var lifeBox = new createjs.Shape();
+	lifeGage = new createjs.Shape();
+	lifeGage.graphics.beginFill("green").drawRect(0, 0, 120, 20);
+	lifeBox.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
+	lifeGage.x = lifeGage.y = 10;
+	lifeBox.x = lifeBox.y = 10;
 
     hero1 = new hero([30,50], startingPositionX, startingPositionY, 1);
     hero1.appear(stage);
@@ -141,8 +141,8 @@ function init() {
 	enemy1.setBounds(enemy1.x, enemy1.y, 50, 70);
 
 	stage.addChild(enemy1);
-	stage.addChild(life);
-	stage.addChild(lifeBack);
+	stage.addChild(lifeGage);
+	stage.addChild(lifeBox);
 
 	stage.update();
 
@@ -293,11 +293,11 @@ function tick(event) {
 			else
 				currLife-=20;
 			hdamag = 0;
-			stage.removeChild(life);
-			life = new createjs.Shape();
-			life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
-			life.x = life.y = 10;
-			stage.addChild(life);
+			stage.removeChild(lifeGage);
+			lifeGage = new createjs.Shape();
+			lifeGage.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+			lifeGage.x = lifeGage.y = 10;
+			stage.addChild(lifeGage);
 			stage.update();
 		}
 	}
@@ -309,6 +309,13 @@ function tick(event) {
 		gameOver();
 	}
 	hdamag++;
+
+	stage.removeChild(lifeGage);
+	lifeGage = new createjs.Shape();
+	lifeGage.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
+	lifeGage.x = lifeGage.y = 10;
+	stage.addChild(lifeGage);
+	stage.update();
 }
 
 
@@ -319,10 +326,5 @@ function fightDirChange() {
 	if (currLife < 119)
 		currLife+=2;
 
-	stage.removeChild(life);
-	life = new createjs.Shape();
-	life.graphics.beginFill("green").drawRect(0, 0, currLife, 20);
-	life.x = life.y = 10;
-	stage.addChild(life);
-	stage.update();
+
 }
