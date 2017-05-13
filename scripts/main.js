@@ -115,7 +115,7 @@ function init() {
 
 	hero = new createjs.Shape();
 	hero.fillCmd = hero.graphics.beginFill("#333333").command;
-	hero.graphics.drawRect(heroX, heroY, 30, 50);
+	hero.graphics.drawRect(0, 0, 30, 50);
     hero.x = heroX;
     hero.y = heroY;
 
@@ -136,11 +136,11 @@ function init() {
 	
 
 
-	enemy1.graphics.drawRect(-25, -25, 50, 70);
-	enemy2.graphics.drawRect(-25, -25, 50, 70);
-	enemy3.graphics.drawRect(-25, -25, 50, 70);
-	enemy4.graphics.drawRect(-25, -25, 50, 70);
-	enemy5.graphics.drawRect(-25, -25, 50, 70);
+	enemy1.graphics.drawRect(0, 0, 50, 70);
+	enemy2.graphics.drawRect(0, 0, 50, 70);
+	enemy3.graphics.drawRect(0, 0, 50, 70);
+	enemy4.graphics.drawRect(0, 0, 50, 70);
+	enemy5.graphics.drawRect(0, 0, 50, 70);
 
 
 	enemy1.x = stage.canvas.width - 50;
