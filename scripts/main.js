@@ -4,8 +4,8 @@ var leftMotion = -10;
 var rightMotion = 10;
 var direction = leftMotion;
 
-var maxLife = 100;
-var life = 100;
+// var maxLife = 100;
+// var life = 100;
 
 var heroHeight = 50;
 var heroWidth = 30;
@@ -22,6 +22,12 @@ var spacePressed = false;
 var directionRight = true;
 var skew = 0;
 
+var timer = 0;
+var lifescale = 0.5;
+var currLife = 120;
+var affecttime = 0;
+var objectss = []
+
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -36,6 +42,14 @@ function init() {
 	heroX = (canvas.width-heroWidth)/2;
 	heroY = (canvas.height-heroHeight)/2;
 
+	life = new createjs.Shape();
+	lifeBack = new createjs.Shape();
+
+	life.graphics.beginFill("green").drawRect(0, 0, 120, 20);
+	lifeBack.graphics.beginStroke("black").drawRect(-1, -1, 122, 22);
+	life.x = life.y = 10;
+	lifeBack.x = lifeBack.y = 10;
+	objectss.push(life);
 
 	hero = new createjs.Shape();
 	hero.fillCmd = hero.graphics.beginFill("#333333").command;
@@ -86,6 +100,8 @@ function init() {
 	stage.addChild(enemy4);
 	stage.addChild(enemy5);
 	stage.addChild(hero);
+	stage.addChild(life);
+	stage.addChild(lifeBack);
 
 	stage.update();
 
