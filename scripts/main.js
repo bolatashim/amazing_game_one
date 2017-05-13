@@ -147,18 +147,6 @@ function init() {
     enemy6.appear(stage);
     enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.size[0], enemy6.size[1]);
 
-	enemy1 = new createjs.Shape();
-	enemy1.fillCmd = enemy1.graphics.beginFill("red").command;
-	enemy1.graphics.drawRect(0, 0, 50, 70)
-	enemy1.x = stage.canvas.width - 50;
-	enemy1.y = stage.canvas.height - 100;
-	enemy1.setBounds(enemy1.x, enemy1.y, 50, 70);
-
-	//enemy10 = new complexEnemy(200, [25, 500], 5);
-    //enemy10.appear(stage);
-
-
-	stage.addChild(enemy1);
 	stage.addChild(lifeGage);
 	stage.addChild(lifeBox);
 
@@ -166,12 +154,6 @@ function init() {
 
 	createjs.Ticker.on("tick", tick); //executes tick every frame
 	createjs.Ticker.setFPS(100);
-
-	enemy1.on("click", function(event){
-		enemy1.fillCmd.style = "green";
-		console.log("clicked");
-		stage.update(event);
-	});
 }
 
 function keyDownHandler(e) {
@@ -333,24 +315,12 @@ function tick(event) {
     hero1.graphic.x = hero1.xPosition + hero1.size[1] * Math.sin(skew*Math.PI/180);
     hero1.graphic.y = hero1.yPosition + hero1.size[1] * (1 - Math.cos(skew*Math.PI/180));
 
-
-	enemy1.x += direction;
-
 	enemyMove(enemy6);
 
-	if (enemy1.x < 0) { 
-		direction = rightMotion;
-		fightDirChange();
-	}
-	if (enemy1.x > stage.canvas.width) { 
-		direction = leftMotion;
-		fightDirChange();
-	}		
-
 	adjustBounds(hero1.graphic);
-	adjustBounds(enemy1);
+	adjustBounds(enemy6.graphic);
 	var bound1 = hero1.graphic.getBounds();
-	var bound2 = enemy1.getBounds();
+	var bound2 = enemy6.graphic.getBounds();
 
 
 	if (checkCollision(bound1, bound2)) {
@@ -368,14 +338,12 @@ function tick(event) {
 			stage.update();
 		}
 	}
-	stage.update(event);
 	if (currLife <= 0) {
 		stage.removeAllChildren();
 		stage.update();
 		createjs.Ticker.removeAllEventListeners();
 		gameOver();
 	}
-	hdamag++;
 
 	stage.removeChild(lifeGage);
 	lifeGage = new createjs.Shape();
@@ -383,15 +351,9 @@ function tick(event) {
 	lifeGage.x = lifeGage.y = 10;
 	stage.addChild(lifeGage);
 	stage.update();
-}
 
+	hdamag++;
+	if (currLife < 119)	currLife+=0.002;
 
-function fightDirChange() {
-	enemy1.direction = !enemy1.direction;
-	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
-	
-	if (currLife < 119)
-		currLife+=2;
-
-
+	stage.update(event);
 }
