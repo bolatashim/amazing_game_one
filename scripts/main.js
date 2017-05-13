@@ -210,7 +210,6 @@ function tick(event) {
 			affecttime = 0;
 		}
 	}
-
 	stage.update(event);
 }
 
