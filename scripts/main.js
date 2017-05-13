@@ -1,4 +1,3 @@
-
 var stage, output, hero, enemy1, enemy2, enemy3, enemy4, enemy5, guy, canvas, ctx;
 
 var leftMotion = -10;
@@ -182,8 +181,22 @@ function tick(event) {
     if(downPressed && heroY < canvas.height-heroHeight) {
         heroY += 1;
     }
-    hero.x = heroX;
-    hero.y = heroY;
+
+    if(spacePressed){
+    	if(directionRight){
+    		skew = 17;
+    	}
+    	else{
+    		skew = -17;
+    	}
+    }
+    else{
+    	skew = 0;
+    }
+    hero.skewX= skew;
+    hero.x = heroX + heroHeight * Math.sin(skew*Math.PI/180);
+    hero.y = heroY + heroHeight * (1 - Math.cos(skew*Math.PI/180));
+
 
 	enemy1.x += direction;
 	enemy2.x += direction;
@@ -221,9 +234,3 @@ function fightDirChange() {
 	console.log(enemy1.getBounds());
 	enemy1.fillCmd.style = enemy1.direction ? "red" : "black";
 }
-
-
-
-
-
-
