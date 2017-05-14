@@ -10,6 +10,7 @@ var timer = 0;
 
 var startButton;
 var startLabel;
+var allEnemies = [];
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -101,6 +102,7 @@ function gameOver() {
 
 
 function init() {
+	allEnemies = [];
     hero1 = new hero([30,50], 3, 120);
 	var startingPositionX = (stage.canvas.width-hero1.width)/2;
 	var startingPositionY = (stage.canvas.height-hero1.height)/2;
@@ -111,9 +113,11 @@ function init() {
     enemy6 = new enemy([50, 20], 40, [25, 180], 1, 500);
     enemy6.appear(stage);
 
+
+	placeEnemiesOnMap(stage, 6);
+
 	drawLifeBox();
 	drawLifeGage();
-
 	stage.update();
 
 	createjs.Ticker.on("tick", tick); //executes tick every frame
@@ -221,6 +225,20 @@ enemy.prototype.disappear = function(stage1){
 	this.direction = null;
 	this.currLife = null;
 	this.graphic = null;
+}
+
+
+function placeEnemiesOnMap(stage, enemynum) {
+	var yscope = (stage.canvas.height) / enemynum;
+	var yPos = yscope/2;
+	for (var j = 0; j < enemynum; j++) {
+		var xleft = Math.random() * (stage.canvas.width/3);
+		var xright = Math.random() * (stage.canvas.width/2) + stage.canvas.width/2;
+		var monster = new enemy([50, 50], yPos, [xleft, xright], 1, 500);
+		monster.appear(stage);
+		allEnemies.push(monster);
+		yPos+= yscope;
+	}
 }
 
 
@@ -345,6 +363,40 @@ function tick(event) {
 			enemy6.disappear(stage);
 		}
 	}
+
+	for (var i = 0; i < allEnemies.length; i++) {
+		var en = allEnemies[i];
+		enemyMove(en);
+
+		if (checkCollision(hero1, en)) {
+			if (hero1.damageCool >= 50) {
+				if (hero1.currLife <= 20)	hero1.currLife = 0;
+				else 						hero1.currLife-=20;
+				hero1.damageCool = 0;
+			}
+		}
+		if (checkCollision(heroAttackBound, en) && hero1.attack) {
+			if (en.currLife <= 20)	
+				en.currLife = 0;
+			else 						
+				en.currLife-=200;
+		}
+
+		if (en.currLife < 500) {
+			en.graphic.fillCmd.style = "#BF0000";
+		}
+
+		if (en.currLife <= 0) {
+			for (var j = 0; j < allEnemies.length; j++) {
+				if (allEnemies[j] === en)
+					allEnemies.splice(i, 1);
+			}
+			en.disappear(stage);
+		}
+
+	}
+
+
 
 	if (hero1.currLife <= 0) {
 		stage.removeAllChildren();
