@@ -114,9 +114,9 @@ function init() {
 	var startingPositionY = (stage.canvas.height-hero1.height)/2;
     hero1.appear(stage, startingPositionX, startingPositionY);
 
-    heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 90, 50);
+    heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 80, 50);
 
-    enemy6 = new enemy([50, 20], 40, [25, 180], 1, 500);
+    enemy6 = new enemy([50, 20], 40, [200, 400], 1, 500);
     enemy6.appear(stage);
 
 
@@ -182,6 +182,7 @@ function hero(size, speed, maxLife){
 	this.direction = null;
 	this.damageCool = null;
 	this.attack = null;
+	this.attackCool = null;
 	this.graphic = null;
 }
 hero.prototype.appear = function(stage1, startingX, startingY){
@@ -196,6 +197,7 @@ hero.prototype.appear = function(stage1, startingX, startingY){
 	this.currLife = this.maxLife;
 	this.damageCool = 0;
 	this.attack = false;
+	this.attackCool = 0;
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
@@ -207,6 +209,7 @@ hero.prototype.disappear = function(stage1){
 	this.direction = null;
 	this.damageCool = null;
 	this.attack = null;
+	this.attackCool = null;
 	this.graphic = null;
 }
 
@@ -328,19 +331,32 @@ function heroControl(hero){
     if(hero.attack){
     	hero.attack = false;
     }
-    else if(spacePressed){
-    	hero.attack = true;
+
+    if(hero.attackCool==0){
+    	if(spacePressed){
+	    	hero.attack = true;
+			hero.attackCool = 1;
+			console.log(hero.direction);
+		}
+    }
+    else if(hero.attackCool == 20){
+    	hero.attackCool = 0;
+    }
+    else{
+    	hero.attackCool += 1;
     }
 
-    var skew
-    if(hero.attack){
-    	if(hero.direction == 1) skew = 17;
-    	else					skew = -17;
+    var attackTimer = hero.attackCool;
+    var skewAmount
+    var skewRad
+    if(attackTimer<15 && attackTimer){
+    	skewScale = 15;
     }
-    else skew = 0;
-    hero.graphic.skewX= skew;
-    hero.graphic.x = hero.xPosition + hero.height * Math.sin(skew*Math.PI/180);
-    hero.graphic.y = hero.yPosition + hero.height * (1 - Math.cos(skew*Math.PI/180));
+    else skewScale = 0;
+    hero.graphic.skewX= skewScale * hero.direction;
+    skewRad = skewScale*hero.direction*Math.PI/180;
+    hero.graphic.x = hero.xPosition + hero.height * Math.sin(skewRad);
+    hero.graphic.y = hero.yPosition + hero.height * (1 - Math.cos(skewRad));
 }
 
 function enemyMove(enemy){
@@ -352,7 +368,8 @@ function enemyMove(enemy){
 
 function tick(event) {
 	heroControl(hero1);
-	heroAttackBound.xPosition = hero1.xPosition;
+	if(hero1.direction == 1)	heroAttackBound.xPosition = hero1.xPosition;
+	else 					heroAttackBound.xPosition = hero1.xPosition - 50;
 	heroAttackBound.yPosition = hero1.yPosition;
 
 	if(enemy6.graphic){
