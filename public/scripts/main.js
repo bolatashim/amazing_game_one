@@ -106,11 +106,11 @@ function init() {
 	var startingPositionX = (stage.canvas.width-hero1.width)/2;
 	var startingPositionY = (stage.canvas.height-hero1.height)/2;
     hero1.appear(stage, startingPositionX, startingPositionY);
-    hero1.graphic.setBounds(hero1.graphic.x, hero1.graphic.x, hero1.width, hero1.height);
 
-    enemy6 = new enemy([50, 20], 40, [25, 180], 1);
+    //heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 90, 50);
+
+    enemy6 = new enemy([50, 20], 40, [25, 180], 1, 500);
     enemy6.appear(stage);
-    enemy6.graphic.setBounds(enemy6.graphic.x, enemy6.graphic.y, enemy6.width, enemy6.height);
 
 	drawLifeBox();
 	drawLifeGage();
@@ -188,7 +188,7 @@ hero.prototype.disappear = function(stage1){
 	this.graphic = null;
 }
 
-function enemy(size, yPosition, xRange, speed){
+function enemy(size, yPosition, xRange, speed, maxLife){
 	this.size = size
 	this.width = size[0];
 	this.height = size[1];
@@ -196,6 +196,8 @@ function enemy(size, yPosition, xRange, speed){
 	this.yPosition = yPosition;
 	this.xRange = xRange;
 	this.speed = speed;
+	this.maxLife = maxLife;
+	this.currLife = null;
 	this.direction = null;
 	this.graphic = null;
 }
@@ -207,12 +209,14 @@ enemy.prototype.appear = function(stage1){
 	this.graphic.x = this.xPosition;
 	this.graphic.y = this.yPosition;
 	this.direction = Math.floor(Math.random() * 2) * 2 - 1;
+	this.currLife = this.maxLife;
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
 enemy.prototype.disappear = function(stage1){
 	stage1.removeChild(this.graphic);
 	this.direction = null;
+	this.currLife = null;
 	this.graphic = null;
 }
 
@@ -258,13 +262,21 @@ complexEnemy.prototype.disappear = function(stage1){
 	this.graphic = null;
 }
 
-function adjustBounds(obj) {
-	obj.setBounds(obj.x, obj.y, 50, 70);
+function bound(x, y, w, h){
+	this.xPosition = x;
+	this.yPosition = y;	
+	this.width = w;
+	this.height = h;
 }
 
-function checkCollision(rect1, rect2) {
-    if ( rect1.x >= rect2.x + rect2.width || rect1.x + rect1.width <= rect2.x || rect1.y >= rect2.y + rect2.height || rect1.y + rect1.height <= rect2.y ) return false;
-    return true;
+function checkCollision(obj1, obj2) {
+	var checkX, checkY
+    if(obj1.xPosition <= obj2.xPosition)	{if(obj1.width >= obj2.xPosition - obj1.xPosition) checkX = true;}
+    else if(obj1.xPosition > obj2.xPosition){if(obj2.width >= obj1.xPosition - obj2.xPosition) checkX = true;}
+    if(obj1.yPosition <= obj2.yPosition)	{if(obj1.height >= obj2.yPosition - obj1.yPosition) checkY = true;}
+    else if(obj1.yPosition > obj2.yPosition){if(obj2.height >= obj1.yPosition - obj2.yPosition) checkY = true;}
+    if(checkX && checkY) return true;
+    else return false;
 }
 
 function heroControl(hero){
@@ -296,22 +308,26 @@ function enemyMove(enemy){
 
 function tick(event) {
 	heroControl(hero1);
+//	heroAttackBound.xPosition = hero1.xPosition;
+//	heroAttackBound.yPosition = hero1.yPosition;
 
 	enemyMove(enemy6);
 
-	adjustBounds(hero1.graphic);
-	adjustBounds(enemy6.graphic);
-	var bound1 = hero1.graphic.getBounds();
-	var bound2 = enemy6.graphic.getBounds();
-
-
-	if (checkCollision(bound1, bound2)) {
+	if (checkCollision1(hero1, enemy6)) {
 		if (hero1.damageCool >= 50) {
 			if (hero1.currLife <= 20)	hero1.currLife = 0;
 			else 						hero1.currLife-=20;
 			hero1.damageCool = 0;
 		}
 	}
+	/*if (checkCollision1(heroAttackBound, enemy6)) {
+		if (enemy6.currLife <= 20)	enemy6.currLife = 0;
+		else 						enemy6.currLife-=20;
+	}
+
+	if (enemy6.currLife <= 500) {
+		enemy6.graphic.fillCmd.style = "BF0000";
+	}*/
 
 	if (hero1.currLife <= 0) {
 		stage.removeAllChildren();
