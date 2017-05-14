@@ -135,11 +135,18 @@ router.post("/edit", ensureAuthenticated, function(req, res, next) {
 
 
 router.post("/changeScore", ensureAuthenticated, function(req, res, next) {
+  console.log( "is thesdsd new score");  
   User.findOne({"username": req.user.username}, function(err, player) {
-    var playerScore = player.bestScore;
-    var newScore = req.body.newScore;
-    if (newScore > playerScore)
-      player.bestScore = newScore;
+    if (player) {
+      var playerScore = player.bestScore;
+      var newScore = req.body.newScore;
+      if (newScore > playerScore)
+        player.bestScore = newScore;
+      res.redirect("/");
+      console.log(newScore, "is the new score");  
+    }else {
+      console.log( "is thesdsd new score");  
+    }
   });
 });
 

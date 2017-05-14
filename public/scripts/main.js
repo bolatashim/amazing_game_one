@@ -1,4 +1,4 @@
-var stage, output, lifeGage, hero1, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
+var stage, output,scoreGage, lifeGage, hero1, enemy1, enemy2, enemy3, enemy4, enemy5, enemy6, guy, canvas, ctx;
 
 var upPressed = false;
 var rightPressed = false;
@@ -7,7 +7,7 @@ var downPressed = false;
 var spacePressed = false;
 
 var timer = 0;
-
+var heroScore = 0;
 var startButton;
 var startLabel;
 var allEnemies = [];
@@ -19,8 +19,8 @@ function start() {
 	stage = new createjs.Stage("amazingCanvas");
 	canvas = stage.canvas;
 	startButton = new createjs.Shape();
-	startLabel = new createjs.Text("Start", "bold 75px Courier", "#ff7700");
-	startLabel.x = stage.canvas.width / 2 - 110	;
+	startLabel = new createjs.Text("Go", "bold 80px Arial", "#ff7700");
+	startLabel.x = stage.canvas.width / 2 - 60;
 	startLabel.y = stage.canvas.height / 2 - 50;
 	
 	startButton.fillCmd = startButton.graphics.beginFill("green").command;
@@ -60,13 +60,17 @@ function start() {
 function gameOver() {
 	restartButton = new createjs.Shape();
 	
-	restartLabel = new createjs.Text("Restart", "bold 75px Courier", "#ff7700");
-	restartLabel.x = stage.canvas.width / 2 - 150;
+	restartLabel = new createjs.Text("Go again", "bold 75px Arial", "#ff7700");
+	restartLabel.x = stage.canvas.width / 2 - 160;
 	restartLabel.y = stage.canvas.height / 2 - 50;
 	
-	endLabel = new createjs.Text("Game Over :(", "bold 75px Courier", "#ff7700");
-	endLabel.x = stage.canvas.width / 2 - 275;
+	endLabel = new createjs.Text("Game Over :(", "bold 60px Arial", "#ff7700");
+	endLabel.x = stage.canvas.width / 2 - 200;
 	endLabel.y = stage.canvas.height / 2 - 250;
+
+	endLabel2 = new createjs.Text("Score: " + heroScore, "bold 50px Arial", "#ff7700");
+	endLabel2.x = stage.canvas.width / 2 - 120;
+	endLabel2.y = stage.canvas.height / 2 - 180;
 	
 	restartButton.fillCmd = restartButton.graphics.beginFill("green").command;
 
@@ -97,12 +101,14 @@ function gameOver() {
 	stage.addChild(restartButton);
 	stage.addChild(restartLabel)
 	stage.addChild(endLabel);
+	stage.addChild(endLabel2);
 	stage.update();
 }
 
 
 function init() {
 	allEnemies = [];
+	heroScore = 0;
     hero1 = new hero([30,50], 3, 120);
 	var startingPositionX = (stage.canvas.width-hero1.width)/2;
 	var startingPositionY = (stage.canvas.height-hero1.height)/2;
@@ -118,11 +124,20 @@ function init() {
 
 	drawLifeBox();
 	drawLifeGage();
+	drawScoreCount();
 	stage.update();
 
 	createjs.Ticker.on("tick", tick); //executes tick every frame
 	createjs.Ticker.setFPS(100);
 
+}
+
+function drawScoreCount(){
+	stage.removeChild(scoreGage);
+	scoreGage = new createjs.Text("Score: " + heroScore, "bold 30px Arial", "#ff7700");
+	scoreGage.y = 4;
+	scoreGage.x = stage.canvas.width - 200;
+	stage.addChild(scoreGage);
 }
 
 function drawLifeBox(){
@@ -376,6 +391,9 @@ function tick(event) {
 			}
 		}
 		if (checkCollision(heroAttackBound, en) && hero1.attack) {
+			heroScore += 20;
+			drawScoreCount();
+
 			if (en.currLife <= 20)	
 				en.currLife = 0;
 			else 						
@@ -402,7 +420,24 @@ function tick(event) {
 		stage.removeAllChildren();
 		stage.update();
 		createjs.Ticker.removeAllEventListeners();
-		gameOver();
+		console.log("sent");
+		var done = false
+
+		// $.ajax({
+		// 	type: 'POST',
+		// 	dataType: "json",
+		// 	data: {
+		// 		newScore: heroScore
+		// 	},
+	 //        dataType: 'application/json',
+  //           url: 'http://localhost:8080/changeScore',						
+  //           success: function(data) {
+  //               console.log('success');
+  //               done = true;
+  //               gameOver();
+  //           }
+  //       });
+        gameOver();
 	}
 
 	hero1.damageCool++;
