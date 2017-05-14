@@ -24,7 +24,6 @@ function start() {
 	
 	startButton.fillCmd = startButton.graphics.beginFill("green").command;
 
-
 	startButton.graphics.beginStroke("black").drawRect(-200, -100, 400, 200);
 	console.log(stage.canvas.width / 2);
 
@@ -107,7 +106,7 @@ function init() {
 	var startingPositionY = (stage.canvas.height-hero1.height)/2;
     hero1.appear(stage, startingPositionX, startingPositionY);
 
-    //heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 90, 50);
+    heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 90, 50);
 
     enemy6 = new enemy([50, 20], 40, [25, 180], 1, 500);
     enemy6.appear(stage);
@@ -119,6 +118,7 @@ function init() {
 
 	createjs.Ticker.on("tick", tick); //executes tick every frame
 	createjs.Ticker.setFPS(100);
+
 }
 
 function drawLifeBox(){
@@ -162,6 +162,7 @@ function hero(size, speed, maxLife){
 	this.currLife = null;
 	this.direction = null;
 	this.damageCool = null;
+	this.attack = null;
 	this.graphic = null;
 }
 hero.prototype.appear = function(stage1, startingX, startingY){
@@ -175,6 +176,7 @@ hero.prototype.appear = function(stage1, startingX, startingY){
 	this.direction = 1;
 	this.currLife = this.maxLife;
 	this.damageCool = 0;
+	this.attack = false;
 	stage1.addChild(this.graphic);
 	return this.graphic;
 }
@@ -185,6 +187,7 @@ hero.prototype.disappear = function(stage1){
 	this.currLife = null;
 	this.direction = null;
 	this.damageCool = null;
+	this.attack = null;
 	this.graphic = null;
 }
 
@@ -203,7 +206,7 @@ function enemy(size, yPosition, xRange, speed, maxLife){
 }
 enemy.prototype.appear = function(stage1){
 	this.graphic = new createjs.Shape();
-	this.graphic.fillCmd = this.graphic.graphics.beginFill("red").command;
+	this.graphic.fillCmd = this.graphic.graphics.beginFill("#333333").command;
 	this.graphic.graphics.drawRect(0, 0, this.width, this.height);
 	this.xPosition = Math.random() * (this.xRange[1] -  this.xRange[0]) + this.xRange[0];
 	this.graphic.x = this.xPosition;
@@ -289,8 +292,15 @@ function heroControl(hero){
     if(rightPressed && hero.xPosition+ds < canvas.width-hero.width)	hero.direction = 1;
     if(leftPressed && hero.xPosition-ds > 0)						hero.direction = -1;
 
+    if(hero.attack){
+    	hero.attack = false;
+    }
+    else if(spacePressed){
+    	hero.attack = true;
+    }
+
     var skew
-    if(spacePressed){
+    if(hero.attack){
     	if(hero.direction == 1) skew = 17;
     	else					skew = -17;
     }
@@ -301,33 +311,40 @@ function heroControl(hero){
 }
 
 function enemyMove(enemy){
-	if(enemy.graphic.x <= enemy.xRange[0])			enemy.direction = 1;
-	else if(enemy.graphic.x >= enemy.xRange[1]) 	enemy.direction = -1;
-	enemy.graphic.x += enemy.direction * enemy.speed;
+	if(enemy.xPosition <= enemy.xRange[0])			enemy.direction = 1;
+	else if(enemy.xPosition >= enemy.xRange[1]) 	enemy.direction = -1;
+	enemy.xPosition += enemy.direction * enemy.speed;
+	enemy.graphic.x = enemy.xPosition;
 }
 
 function tick(event) {
 	heroControl(hero1);
-//	heroAttackBound.xPosition = hero1.xPosition;
-//	heroAttackBound.yPosition = hero1.yPosition;
+	heroAttackBound.xPosition = hero1.xPosition;
+	heroAttackBound.yPosition = hero1.yPosition;
 
-	enemyMove(enemy6);
+	if(enemy6.graphic){
+		enemyMove(enemy6);
 
-	if (checkCollision1(hero1, enemy6)) {
-		if (hero1.damageCool >= 50) {
-			if (hero1.currLife <= 20)	hero1.currLife = 0;
-			else 						hero1.currLife-=20;
-			hero1.damageCool = 0;
+		if (checkCollision(hero1, enemy6)) {
+			if (hero1.damageCool >= 50) {
+				if (hero1.currLife <= 20)	hero1.currLife = 0;
+				else 						hero1.currLife-=20;
+				hero1.damageCool = 0;
+			}
+		}
+		if (checkCollision(heroAttackBound, enemy6) && hero1.attack) {
+			if (enemy6.currLife <= 20)	enemy6.currLife = 0;
+			else 						enemy6.currLife-=200;
+		}
+
+		if (enemy6.currLife < 500) {
+			enemy6.graphic.fillCmd.style = "#BF0000";
+		}
+
+		if (enemy6.currLife <= 0) {
+			enemy6.disappear(stage);
 		}
 	}
-	/*if (checkCollision1(heroAttackBound, enemy6)) {
-		if (enemy6.currLife <= 20)	enemy6.currLife = 0;
-		else 						enemy6.currLife-=20;
-	}
-
-	if (enemy6.currLife <= 500) {
-		enemy6.graphic.fillCmd.style = "BF0000";
-	}*/
 
 	if (hero1.currLife <= 0) {
 		stage.removeAllChildren();
@@ -336,12 +353,10 @@ function tick(event) {
 		gameOver();
 	}
 
-	drawLifeGage();
-	stage.update();
-
 	hero1.damageCool++;
+	drawLifeGage();
 
 	if (hero1.currLife < 119)	hero1.currLife+=0.002;
 
-	stage.update(event);
+	stage.update();
 }
