@@ -10,7 +10,7 @@
 #### Run the app using the following commands in two separate terminal windows/tabs: <br />
 
 ##### Step 1: `$ mongod`  to start mongoDB<br />
-##### Step 2: `$ node app.js` - to start the application<br />
+##### Step 2: `$ node app.js` to start the application<br />
 ##### Step 3: Go to `locahost:8080` in your browser <br />
 
 
