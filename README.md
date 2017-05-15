@@ -16,7 +16,7 @@
 ---
 #### How to Play:
 
-##### The goal of the gam is to defeat as many enemy blocks with the small rectangular shaped hero. Each enemy block can be defeated by hitting it 3 times. Enemy block turning red indicated that enemy has been hit. For each defeated block the player receives 60 points and loses HP each time the hero block comes into contact with an enemy block.
+##### The goal of the game is to defeat as many enemy blocks as possible by controlling the small rectangular shaped hero. Each enemy block can be defeated by hitting it 3 times. Enemy blocks turn red upon being hit once and disappear from view after 2 more hits. For each defeated block the player receives 60 points and loses HP each time their hero block comes into contact with an enemy block.
 
 |Key| Action|
 |:---| :---|
