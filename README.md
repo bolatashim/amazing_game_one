@@ -7,10 +7,10 @@
 
 ---
 
-####How to run
+#### How to run
 
-####Step 1: `$ mongod`  to start mongoDB from the Terminal<br />
-####Step 2: `$ node app.js` - to run the application<br />
+#### Step 1: `$ mongod`  to start mongoDB from the Terminal<br />
+#### Step 2: `$ node app.js` - to run the application<br />
 
 
 
