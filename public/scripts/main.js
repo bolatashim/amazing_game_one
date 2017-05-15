@@ -109,6 +109,7 @@ function gameOver() {
 
 function init() {
    allEnemies = [];
+   heroScore = 0;
     hero1 = new hero([30,50], 3, 120);
    var startingPositionX = (stage.canvas.width-hero1.width)/2;
    var startingPositionY = (stage.canvas.height-hero1.height)/2;
@@ -124,6 +125,7 @@ function init() {
 
    drawLifeBox();
    drawLifeGage();
+   drawScoreCount();
    stage.update();
 
    createjs.Ticker.on("tick", tick); //executes tick every frame
@@ -234,6 +236,14 @@ enemy.prototype.disappear = function(stage1){
    this.direction = null;
    this.currLife = null;
    this.graphic = null;
+}
+
+function drawScoreCount(){
+	stage.removeChild(scoreGage);
+	scoreGage = new createjs.Text("Score: " + heroScore, "bold 30px Arial", "#ff7700");
+	scoreGage.y = 4;
+	scoreGage.x = stage.canvas.width - 200;
+	stage.addChild(scoreGage);
 }
 
 
@@ -404,6 +414,9 @@ function tick(event) {
             }
          }
          if (checkCollision(heroAttackBound, en) && hero1.attack) {
+            heroScore += 20;
+			drawScoreCount();
+
             if (en.currLife <= 20)   
                en.currLife = 0;
             else                   
