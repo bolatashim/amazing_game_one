@@ -7,10 +7,10 @@
 
 ---
 
-#### We mongoDB and NodeJS for storing users' scores data. To Run the app using the following commands in two separate terminal windows/tabs:
+#### We mongoDB and NodeJS for storing users' scores data. To run the app follow the steps below:
 
 ##### Step 1: `$ mongod`  to start mongoDB
-##### Step 2: `$ node app.js` to start the application
+##### Step 2: `$ node app.js` in a new Terminal window/tab to start the application 
 ##### Step 3: Go to `locahost:8080` in your browser
 
 ---
