@@ -117,11 +117,11 @@ function init() {
 
     heroAttackBound = new bound(hero1.xPosition, hero1.yPosition, 80, 50);
 
-    enemy6 = new enemy([50, 20], 40, [200, 400], 1, 500);
-    enemy6.appear(stage);
+    //enemy6 = new enemy([50, 20], 40, [200, 400], 1, 500);
+    //enemy6.appear(stage);
 
 
-   placeEnemiesOnMap(stage, 6);
+   placeEnemiesOnMap(stage, 7);
 
    drawLifeBox();
    drawLifeGage();
@@ -248,7 +248,7 @@ function drawScoreCount(){
 
 
 function placeEnemiesOnMap(stage, enemynum) {
-   var yscope = (stage.canvas.height) / enemynum;
+   var yscope = (stage.canvas.height) / (enemynum+0.2);
    var yPos = yscope/2;
    for (var j = 0; j < enemynum; j++) {
       var rangeSize = Math.random() * 150 + 150;
@@ -377,7 +377,7 @@ function tick(event) {
    else                heroAttackBound.xPosition = hero1.xPosition - 50;
    heroAttackBound.yPosition = hero1.yPosition;
 
-   if(enemy6.graphic){
+   /*if(enemy6.graphic){
       enemyMove(enemy6);
 
       if (checkCollision(hero1, enemy6)) {
@@ -399,7 +399,7 @@ function tick(event) {
       if (enemy6.currLife <= 0) {
          enemy6.disappear(stage);
       }
-   }
+    }*/
 
    for (var i = 0; i < allEnemies.length; i++) {
       var en = allEnemies[i];
